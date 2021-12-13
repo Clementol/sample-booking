@@ -1,7 +1,5 @@
 # Nuom's Backend interview 
 
-----
-
 If you are reading this, it's probably because you are thinking of joining our engineering team at [nuom](https://nuom.co.uk). With this test, we will assess:
 
 * Your capacity to write backend code
@@ -84,3 +82,11 @@ To complete this test, you will need to complete the following tasks:
 4. Returns all the available **Locations** within a specific Radius based on GPS coordinates
 5. Add logic to the Booking creation endpoint (from task 4) to check if the Trainer is available on the specified dates
 6. Add a UI to create a Booking (can be done with the frontend framework of your choice, we recommend [VueJS](https://vuejs.org/))
+
+
+## How to submit:
+
+* Clone this repository to you local machine
+* Create a new branch for your submission
+* Do you work on that branch
+* Once you are done, submit a PR with your work
