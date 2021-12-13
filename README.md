@@ -47,8 +47,10 @@ folder
 ### Location
 * name: String
 * city: String
-* gps: String (latitude and longitude coordinates)
+* latitude: String (latitude GPS coordinates)
+* longitude: String (longitude GPS coordinates)
 * wheelchairAccessible: Boolean
+* country: String (country name only United Kingdom for this exercise)
 
 ### Trainer
 * firstName: String
@@ -57,7 +59,7 @@ folder
 * competencies: Array<String> (List of topics)
 * needWheelchair: Boolean
 * city: String
-* gps: String (latitude and longitude coordinates)
+* country: String (country name only United Kingdom for this exercise)
 
 ### Student
 * email: string
