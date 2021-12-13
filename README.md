@@ -82,7 +82,8 @@ To complete this test, you will need to complete the following tasks:
 4. Returns all the available **Locations** within a specific Radius based on GPS coordinates
 5. Add logic to the Booking creation endpoint (from task 4) to check if the Trainer is available on the specified dates
 6. Add a UI to create a Booking (can be done with the frontend framework of your choice, we recommend [VueJS](https://vuejs.org/))
-
+7. Create [OpenAPI](https://swagger.io/specification/) documentation. You can use something like [Swagger]
+   (https://swagger.io/)
 
 ## How to submit:
 
