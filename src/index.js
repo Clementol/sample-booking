@@ -24,10 +24,6 @@ app.use(cors());
 
 // Routes
 routes(app)
-// app.use("/api", authRouter);
-// app.use("/api", routes.bookingRouter);
-// app.use("/api", routes.trainerRouter);
-// app.use("/api", routes.locationRouter);
 
 mongoose
   .connect(config.MONGO_URI, {

@@ -5,10 +5,13 @@ import { trainerRouter } from "./trainer";
 
 
 const routes = (app) => {
-  app.use("/api", authRouter);
-  app.use("/api", bookingRouter);
-  app.use("/api", trainerRouter);
-  app.use("/api", locationRouter);
+  
+  const v1 = app
+  v1.use("/api/v1", authRouter);
+  v1.use("/api/v1", bookingRouter);
+  v1.use("/api/v1", trainerRouter);
+  v1.use("/api/v1", locationRouter);
+
 };
 
 export {routes}
