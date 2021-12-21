@@ -1,0 +1,36 @@
+{
+  "name": "backend-test",
+  "version": "1.0.0",
+  "description": "If you are reading this, it's probably because you are thinking of joining our engineering team at [nuom](https://nuom.co.uk). With this test, we will assess:",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon --experimental-specifier-resolution=node src/index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuom-dev/backend-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nuom-dev/backend-test/issues"
+  },
+  "homepage": "https://github.com/nuom-dev/backend-test#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/node": "^7.16.5",
+    "@babel/preset-env": "^7.16.5"
+  }
+}
