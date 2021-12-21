@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon --experimental-specifier-resolution=node src/index"
+    "test": "node --experimental-specifier-resolution=node src/index"
   },
   "repository": {
     "type": "git",
@@ -32,5 +32,8 @@
     "@babel/core": "^7.16.5",
     "@babel/node": "^7.16.5",
     "@babel/preset-env": "^7.16.5"
+  },
+  "engines": {
+    "node": "14"
   }
 }
