@@ -4,7 +4,7 @@ import compression from "compression";
 import morgan from "morgan";
 import mongoose from "mongoose";
 
-// import authRouter from "./api/auth";
+import "dotenv/config"
 
 
 const app = express();
