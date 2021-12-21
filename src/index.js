@@ -13,7 +13,7 @@ const app = express();
 import { config } from "./config";
 import { routes } from "./api";
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 
 app.use(compression());
