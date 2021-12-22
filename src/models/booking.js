@@ -19,6 +19,11 @@ const bookingSchema = new Mongoose.Schema(
     },
     students: [
       {
+        studendId: {
+          type: Mongoose.Schema.Types.ObjectId,
+          ref: "user",
+          required: true,
+        },
         email: {
           type: String,
           required: true,
