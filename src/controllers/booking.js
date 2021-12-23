@@ -16,7 +16,8 @@ const createBooking = async (req, res) => {
       locationCity,
     } = req.body;
     //check if user already booked the course
-    Booking.find({
+    console.log(courseId, studentId)
+    await Booking.find({
       _id: courseId,
       "students.studentId": { $eq: studentId },
     }).exec((_, booking) => {
