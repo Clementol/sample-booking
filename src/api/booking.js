@@ -1,9 +1,13 @@
 import { Router } from "express";
-import { createBooking } from "../controllers/booking";
+import { addStudentToBooking, createBooking, deleteBooking, removeStudentFromBooking } from "../controllers/booking";
+import { requireSign } from "../middlewares";
 
 const bookingRouter = Router()
 
-bookingRouter.get('/booking/create', createBooking)
+bookingRouter.post('/booking/create', requireSign, createBooking)
+bookingRouter.put('/booking/add-student', requireSign, addStudentToBooking)
+bookingRouter.put('/booking/remove-student', requireSign, removeStudentFromBooking)
+bookingRouter.delete('/booking/:id', requireSign, deleteBooking)
 
 
 export {bookingRouter}

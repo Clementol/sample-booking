@@ -161,7 +161,7 @@ const removeStudentFromBooking = async (req, res) => {
 
 const deleteBooking = (req, res) => {
   try {
-    const { bookingId } = req.body;
+    const { id } = req.params;
     Booking.findOneAndRemove({ _id: bookingId }).then(() => {
       res.status(202).json({ message: "booking deleted" });
       return;
