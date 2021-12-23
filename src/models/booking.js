@@ -19,7 +19,7 @@ const bookingSchema = new Mongoose.Schema(
     },
     students: [
       {
-        studendId: {
+        studentId: {
           type: Mongoose.Schema.Types.ObjectId,
           ref: "user",
           required: true,
