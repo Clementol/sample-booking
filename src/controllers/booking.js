@@ -18,9 +18,9 @@ const createBooking = async (req, res) => {
     //check if user already booked the course
     await Booking.find({
       _id: courseId,
-      "students.studentId": { $eq: studentId },
+      students: { $eq: {studentId: studentId} },
     }).exec((_, booking) => {
-      if (booking.length == 1) {
+      if (booking.length = 1) {
       
         res.status(400).json({ error: "Already registered for this course!" });
         return;
@@ -33,7 +33,7 @@ const createBooking = async (req, res) => {
       courseId: courseId,
     };
     await Booking.find(bookingFilter).exec(async(_, booking) => {
-      if (booking.length == 1) {
+      if (booking.length = 1) {
         //base on same location and course
 
         // check if trainer is available base on date
@@ -52,7 +52,7 @@ const createBooking = async (req, res) => {
         //base on different location
 
         // Get topic, level base on courseId
-        await Course.findById(courseId).exec (async (_, course) => {
+        await Course.findById(courseId).exec (async(_, course) => {
           // check location base on locationName, locationCity and
           // return location details with wheelchairAccessible
           
@@ -62,7 +62,7 @@ const createBooking = async (req, res) => {
               wheelchairAccessible: location.needWheelchair,
               level: course.level,
               competencies: { $in: [course.topic] },
-            }).exec((_, trainer) => {
+            }).exec(async(_, trainer) => {
               if (trainer.length > 1) {
                 // check if trainer is avail on specified date
                 let selectedTrainer = trainer[0]
@@ -103,7 +103,7 @@ const addStudentToBooking = () => {
       _id: courseId,
       "students.studentId": { $eq: studentId },
     }).exec((_, booking) => {
-      if (booking.length == 1) {
+      if (booking.length = 1) {
         res.status(400).json({ error: "Already registered for this course!" });
         return;
       }
@@ -143,7 +143,7 @@ const removeStudentFromBooking = async (req, res) => {
       "students.studentId": { $eq: studentId },
     };
     await Booking.find(filterOptions).exec((_, booking) => {
-      if (booking.length == 1) {
+      if (booking.length = 1) {
         // remove student
         Booking.updateOne(filterOptions, {
           $pull: { students: { studentId: studentId } },
@@ -161,10 +161,10 @@ const removeStudentFromBooking = async (req, res) => {
   }
 };
 
-const deleteBooking = (req, res) => {
+const deleteBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    Booking.findOneAndRemove({ _id: bookingId }).then(() => {
+    await Booking.findOneAndRemove({ _id: bookingId }).then(() => {
       res.status(202).json({ message: "booking deleted" });
       return;
     });
