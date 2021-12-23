@@ -55,6 +55,7 @@ const createBooking = async (req, res) => {
         await Course.findById(courseId).exec (async (_, course) => {
           // check location base on locationName, locationCity and
           // return location details with wheelchairAccessible
+          console.log(course)
           await Location.findById(locationId).exec(async(_, location) => {
             // selection trainer base on wheelchair, competence(topic), level
             await Trainer.find({
@@ -64,7 +65,6 @@ const createBooking = async (req, res) => {
             }).exec((_, trainer) => {
               if (trainer.length > 1) {
                 // check if trainer is avail on specified date
-
                 // new booking
                 new Booking({
                   courseId: courseId,
