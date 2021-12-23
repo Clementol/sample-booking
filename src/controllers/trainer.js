@@ -4,7 +4,7 @@ const courseTrainers = async (req, res) => {
   try {
     const { course } = req.params;
     Trainer.find({ competencies: { $in: [course] } }).exec((_, trainers) => {
-      if (trainers) {
+      if (trainers.length >= 1) {
         res.status(200).json({ trainers });
         return;
       } else {
