@@ -13,8 +13,9 @@ const cityLocations = async (req, res) => {
       }
     
     });
-  } catch (error) {
-    return res.status(400).json({ error });
+  } catch (err) {
+    return res.status(400).json({ error: `Unable to get locations ${err}` });
+
   }
 };
 
