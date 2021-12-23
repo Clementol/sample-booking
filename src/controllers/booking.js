@@ -31,7 +31,7 @@ const createBooking = async (req, res) => {
       locationId: locationId,
       courseId: courseId,
     };
-    await Booking.find(bookingFilter).exec((_, booking) => {
+    await Booking.find(bookingFilter).exec(async(_, booking) => {
       if (booking) {
         //base on same location and course
 
@@ -51,10 +51,10 @@ const createBooking = async (req, res) => {
         //base on different location
 
         // Get topic, level base on courseId
-        await Course.findById(courseId).exec((_, course) => {
+        await Course.findById(courseId).exec (async (_, course) => {
           // check location base on locationName, locationCity and
           // return location details with wheelchairAccessible
-          await Location.findById(locationId).exec((_, location) => {
+          await Location.findById(locationId).exec(async(_, location) => {
             // selection trainer base on wheelchair, competence(topic), level
             await Trainer.find({
               wheelchairAccessible: location.needWheelchair,
@@ -96,8 +96,8 @@ const addStudentToBooking = () => {
     const studentId = id;
     const { courseId, locationId } = req.body;
 
-     //check if user already booked the course
-     Booking.find({
+    //check if user already booked the course
+    Booking.find({
       _id: courseId,
       "students.studentId": { $eq: studentId },
     }).exec((_, booking) => {
@@ -130,40 +130,51 @@ const addStudentToBooking = () => {
 };
 
 const removeStudentFromBooking = async (req, res) => {
-
+  let msg;
   try {
     const { id, email } = req.user;
     const studentId = id;
     const { courseId, locationId } = req.body;
     //check if user already booked the course
-    Booking.find({
+    let filterOptions = {
       _id: courseId,
       "students.studentId": { $eq: studentId },
-    }).exec((_, booking) => {
+    };
+    await Booking.find(filterOptions).exec((_, booking) => {
       if (booking) {
         // remove student
+        Booking.updateOne(filterOptions, {
+          $pull: { students: { studentId: studentId } },
+        }).then(() => {
+          msg = { message: `Remove student from booking` };
+          return res.status(202).json(msg);
+        });
       } else {
-        return res.status(400).json({error: `student not booked`})
+        return res.status(400).json({ error: `student not booked` });
       }
     });
   } catch (error) {
-    
+    msg = { error: `Unable to remove student from booking ${error}` };
+    return res.status(400).json(msg);
   }
-
 };
 
 const deleteBooking = (req, res) => {
   try {
-    const {bookingId} = req.body
-    Booking.findOneAndRemove({_id: bookingId})
-    .then(() =>  {
-      res.status(202).json({message: "booking deleted"})
-      return
-    })
+    const { bookingId } = req.body;
+    Booking.findOneAndRemove({ _id: bookingId }).then(() => {
+      res.status(202).json({ message: "booking deleted" });
+      return;
+    });
   } catch (error) {
-    res.status(400).json({message: `Unable to delete booking ${error}`})
-      return
+    res.status(400).json({ message: `Unable to delete booking ${error}` });
+    return;
   }
 };
 
-export { createBooking };
+export {
+  createBooking,
+  addStudentToBooking,
+  removeStudentFromBooking,
+  deleteBooking,
+};
