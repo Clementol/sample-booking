@@ -63,7 +63,7 @@ const createBooking = async (req, res) => {
                         let selectedTrainer =
                           trainer.length > 1 ? trainer[0] : trainer;
                         // new booking
-                        await new Booking({
+                        await Booking.create({
                           courseId: courseId,
                           locationId: locationId,
                           trainerId: selectedTrainer._id,
@@ -71,7 +71,7 @@ const createBooking = async (req, res) => {
                           startDate: startDate,
                           endDate: endDate,
                         })
-                          .save()
+                         
                           .then((booking) => {
                             console.log("here");
                             if (booking) {
