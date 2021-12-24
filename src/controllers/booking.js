@@ -74,8 +74,8 @@ const createBooking = async (req, res) => {
                       endDate: endDate,
                     })
                       .save()
-                      .then((res) => {
-                        if (res) {
+                      .then((booking) => {
+                        if (booking) {
                           const msg = { message: `booking successful` };
                           return res.status(200).json(msg);
                         }
