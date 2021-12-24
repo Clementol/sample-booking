@@ -75,7 +75,7 @@ const createBooking = async (req, res) => {
                           .then((booking) => {
                               console.log("here")
                               if (booking) {
-                                const msg = { message: `booking successful` };
+                                const msg = { message: `New booking created` };
                                 return res.status(200).json(msg);
                               }
                             })
