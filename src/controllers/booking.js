@@ -18,7 +18,7 @@ const createBooking = async (req, res) => {
     //check if user already booked the course
     Booking.find({
       _id: courseId,
-      students: { $eq: { studentId: studentId } },
+      "students.studentId": studentId 
     }).exec((_, booking) => {
       
       if ((booking.length == 1)) {
