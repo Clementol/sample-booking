@@ -16,12 +16,12 @@ const createBooking = async (req, res) => {
       locationCity,
     } = req.body;
     //check if user already booked the course
-    await Booking.find({
+    Booking.find({
       _id: courseId,
-      students: { $eq: {studentId: studentId} },
+      students: { $eq: { studentId: studentId } },
     }).exec((_, booking) => {
-      if (booking.length = 1) {
       
+      if ((booking.length == 1)) {
         res.status(400).json({ error: "Already registered for this course!" });
         return;
       }
@@ -32,57 +32,57 @@ const createBooking = async (req, res) => {
       locationId: locationId,
       courseId: courseId,
     };
-    await Booking.find(bookingFilter).exec(async(_, booking) => {
-      if (booking.length = 1) {
+    await Booking.find(bookingFilter).exec((_, booking) => {
+      if (booking.length == 1) {
         //base on same location and course
-
-        // check if trainer is available base on date
-        if (startDate >= booking.startDate && endDate <= booking.endDate) {
-          //update booking by adding student
-          Booking.updateOne(bookingFilter, {
-            $push: { students: { studentId: studentId, email: email } },
-          }).then(() => {
-            const msg = { message: `booking successful` };
-            return res.status(201).json(msg);
-          });
-        } else {
-          return res.status(400).json({ error: "trainer not available" });
-        }
+        console.log(booking.length)
+        //update booking by adding student
+        Booking.updateOne(bookingFilter, {
+          $push: { students: { studentId: studentId, email: email } },
+        }).then(() => {
+          const msg = { message: `booking successful` };
+          return res.status(201).json(msg);
+        });
       } else {
         //base on different location
 
         // Get topic, level base on courseId
-        await Course.findById(courseId).exec (async(_, course) => {
+        Course.findById(courseId).exec(async (_, course) => {
           // check location base on locationName, locationCity and
           // return location details with wheelchairAccessible
-          
-          await Location.findById(locationId).exec(async(_, location) => {
-            // selection trainer base on wheelchair, competence(topic), level
-            await Trainer.find({
-              wheelchairAccessible: location.needWheelchair,
-              level: course.level,
-              competencies: { $in: [course.topic] },
-            }).exec(async(_, trainer) => {
-              if (trainer.length > 1) {
-                // check if trainer is avail on specified date
-                let selectedTrainer = trainer[0]
-                // new booking
-                new Booking({
-                  courseId: courseId,
-                  locationId: locationId,
-                  trainerId: selectedTrainer._id,
-                  students: [{ studentId: studentId, email: email }],
-                  startDate: startDate,
-                  endDate: endDate,
-                })
-                  .save()
-                  .then(() => {
-                    const msg = { message: `booking successful` };
-                    return res.status(200).json(msg);
-                  });
+          if (course.length == 1) {
+            await Location.findById(locationId).exec(async (_, location) => {
+              if (location.length == 1) {
+                // selection trainer base on wheelchair, competence(topic), level
+                await Trainer.find({
+                  wheelchairAccessible: location.needWheelchair,
+                  level: course.level,
+                  competencies: { $in: [course.topic] },
+                }).exec(async (_, trainer) => {
+                  if (trainer.length > 1) {
+                    // check if trainer is avail on specified date
+                    let selectedTrainer = trainer[0];
+                    // new booking
+                    await new Booking({
+                      courseId: courseId,
+                      locationId: locationId,
+                      trainerId: selectedTrainer._id,
+                      students: [{ studentId: studentId, email: email }],
+                      startDate: startDate,
+                      endDate: endDate,
+                    })
+                      .save()
+                      .then((res) => {
+                        if (res) {
+                          const msg = { message: `booking successful` };
+                          return res.status(200).json(msg);
+                        }
+                      });
+                  }
+                });
               }
             });
-          });
+          }
         });
       }
     });
@@ -103,7 +103,7 @@ const addStudentToBooking = () => {
       _id: courseId,
       "students.studentId": { $eq: studentId },
     }).exec((_, booking) => {
-      if (booking.length = 1) {
+      if (booking.length == 1) {
         res.status(400).json({ error: "Already registered for this course!" });
         return;
       }
@@ -143,7 +143,7 @@ const removeStudentFromBooking = async (req, res) => {
       "students.studentId": { $eq: studentId },
     };
     await Booking.find(filterOptions).exec((_, booking) => {
-      if (booking.length = 1) {
+      if (booking.length == 1) {
         // remove student
         Booking.updateOne(filterOptions, {
           $pull: { students: { studentId: studentId } },
