@@ -17,11 +17,11 @@ const createBooking = async (req, res) => {
     } = req.body;
     //check if user already booked the course
     Booking.find({
-      _id: courseId,
-      students: {$eq: studentId}
+      courseId: courseId,
+      students: {$elemMatch: {studentId: studentId}}
     }).exec((_, booking) => {
-      
-      if ((booking)) {
+      if (booking.length == 1) {
+        console.log(booking)
         res.status(400).json({ error: "Already registered for this course!" });
         return;
       }
@@ -51,7 +51,7 @@ const createBooking = async (req, res) => {
         Course.findById({_id: courseId}).exec(async (_, course) => {
           // check location base on locationName, locationCity and
           // return location details with wheelchairAccessible
-          console.log(course)
+          
           if (course) {
             await Location.findById({_id: locationId}).exec(async (_, location) => {
               if (location) {
