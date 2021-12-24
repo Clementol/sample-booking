@@ -71,13 +71,18 @@ const createBooking = async (req, res) => {
                             startDate: startDate,
                             endDate: endDate,
                           })
-                            .save()
-                            .then((booking) => {
+                          .save()
+                          .then((booking) => {
+                              console.log("here")
                               if (booking) {
                                 const msg = { message: `booking successful` };
                                 return res.status(200).json(msg);
                               }
-                            });
+                            })
+                          .catch((err) => {
+                            const msg = {error: `Can't create new booking ${err}`}
+                            return res.status(400).json(msg)
+                          })
                         }
                       });
                     }
