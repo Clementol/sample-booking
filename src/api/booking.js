@@ -7,7 +7,7 @@ const bookingRouter = Router()
 bookingRouter.post('/booking/create', requireSign, createBooking)
 bookingRouter.put('/booking/add-student', requireSign, addStudentToBooking)
 bookingRouter.put('/booking/remove-student', requireSign, removeStudentFromBooking)
-bookingRouter.delete('/booking/:id', requireSign, deleteBooking)
+bookingRouter.delete('/booking/delete/:id', requireSign, deleteBooking)
 
 
 export {bookingRouter}

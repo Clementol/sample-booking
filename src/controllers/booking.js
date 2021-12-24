@@ -110,7 +110,7 @@ const addStudentToBooking = () => {
     //check if user already booked the course
     Booking.find({
       _id: courseId,
-      "students.studentId": { $eq: studentId },
+      students: { $elemMatch: { studentId: studentId } },
     }).exec((_, booking) => {
       if (booking.length == 1) {
         res.status(400).json({ error: "Already registered for this course!" });
@@ -173,7 +173,13 @@ const removeStudentFromBooking = async (req, res) => {
 const deleteBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    await Booking.findOneAndRemove({ _id: bookingId }).then(() => {
+    Booking.find({id}).then((booking) => {
+      if (booking) {
+        res.status(400).json({ error: "booking does not exist" });
+      return;
+      }
+    })
+    await Booking.findOneAndRemove({ _id: id }).then(() => {
       res.status(202).json({ message: "booking deleted" });
       return;
     });
