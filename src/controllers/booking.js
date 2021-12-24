@@ -33,9 +33,10 @@ const createBooking = async (req, res) => {
       courseId: courseId,
     };
     await Booking.find(bookingFilter).exec((_, booking) => {
+   
       if (booking.length == 1) {
         //base on same location and course
-        console.log(booking.length)
+        
         //update booking by adding student
         Booking.updateOne(bookingFilter, {
           $push: { students: { studentId: studentId, email: email } },
@@ -47,11 +48,11 @@ const createBooking = async (req, res) => {
         //base on different location
 
         // Get topic, level base on courseId
-        Course.findById(courseId).exec(async (_, course) => {
+        Course.findById({_id: courseId}).exec(async (_, course) => {
           // check location base on locationName, locationCity and
           // return location details with wheelchairAccessible
           if (course.length == 1) {
-            await Location.findById(locationId).exec(async (_, location) => {
+            await Location.findById({_id: locationId}).exec(async (_, location) => {
               if (location.length == 1) {
                 // selection trainer base on wheelchair, competence(topic), level
                 await Trainer.find({
