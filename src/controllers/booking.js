@@ -19,9 +19,8 @@ const createBooking = async (req, res) => {
     Booking.find({
       courseId: courseId,
       students: { $elemMatch: { studentId: studentId } },
-    }).exec(async(_, booking) => {
+    }).exec(async (_, booking) => {
       if (booking.length == 1) {
-        
         res.status(400).json({ error: "Already registered for this course!" });
         return;
       } else {
@@ -59,31 +58,33 @@ const createBooking = async (req, res) => {
                         level: course.level,
                         competencies: { $in: [course.topic] },
                       }).exec(async (_, trainer) => {
-                        if (trainer.length > 1) {
-                          // check if trainer is avail on specified date
-                          let selectedTrainer = trainer[0];
-                          // new booking
-                          await new Booking({
-                            courseId: courseId,
-                            locationId: locationId,
-                            trainerId: selectedTrainer._id,
-                            students: [{ studentId: studentId, email: email }],
-                            startDate: startDate,
-                            endDate: endDate,
-                          })
+                        
+                        // check if trainer is avail on specified date
+                        let selectedTrainer =
+                          trainer.length > 1 ? trainer[0] : trainer;
+                        // new booking
+                        await new Booking({
+                          courseId: courseId,
+                          locationId: locationId,
+                          trainerId: selectedTrainer._id,
+                          students: [{ studentId: studentId, email: email }],
+                          startDate: startDate,
+                          endDate: endDate,
+                        })
                           .save()
                           .then((booking) => {
-                              console.log("here")
-                              if (booking) {
-                                const msg = { message: `New booking created` };
-                                return res.status(200).json(msg);
-                              }
-                            })
-                          .catch((err) => {
-                            const msg = {error: `Can't create new booking ${err}`}
-                            return res.status(400).json(msg)
+                            console.log("here");
+                            if (booking) {
+                              const msg = { message: `New booking created` };
+                              return res.status(200).json(msg);
+                            }
                           })
-                        }
+                          .catch((err) => {
+                            const msg = {
+                              error: `Can't create new booking ${err}`,
+                            };
+                            return res.status(400).json(msg);
+                          });
                       });
                     }
                   }
