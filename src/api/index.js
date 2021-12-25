@@ -1,5 +1,6 @@
 import {authRouter} from "./auth";
 import { bookingRouter } from "./booking";
+import { initialDataRouter } from "./initialData";
 import { locationRouter } from "./location";
 import { trainerRouter } from "./trainer";
 
@@ -11,6 +12,7 @@ const routes = (app) => {
   v1.use("/api/v1", bookingRouter);
   v1.use("/api/v1", trainerRouter);
   v1.use("/api/v1", locationRouter);
+  v1.use("/api/v1", initialDataRouter);
 
 };
 
