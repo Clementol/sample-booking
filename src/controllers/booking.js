@@ -103,24 +103,26 @@ const createBooking = async (req, res) => {
 
 const addStudentToBooking = () => {
   try {
-    const { id, email } = req.user;
-    const studentId = id;
-    const { courseId, locationId } = req.body;
+    // const { id, email } = req;
+    const bookingId = req.params.id;
+    const { studentId, email } = req.body;
 
     //check if user already booked the course
     Booking.find({
-      _id: courseId,
+      _id: bookingId,
       students: { $elemMatch: { studentId: studentId } },
     }).exec((_, booking) => {
       if (booking.length == 1) {
         res.status(400).json({ error: "Already registered for this course!" });
         return;
+      } else {
+        res.status(400).json({ error: "Booking doesn't exist" });
+        return;
       }
     });
 
     let bookingFilter = {
-      locationId: locationId,
-      courseId: courseId,
+      _id: bookingId,
     };
 
     Booking.updateOne(bookingFilter, {
@@ -143,16 +145,16 @@ const addStudentToBooking = () => {
 const removeStudentFromBooking = async (req, res) => {
   let msg;
   try {
-    const { id, email } = req.user;
-    const studentId = id;
-    const { courseId, locationId } = req.body;
+   // const {admin} = req.user;
+    const bookingId = req.params.id;
+    const { studentId } = req.body;
     //check if user already booked the course
     let filterOptions = {
-      _id: courseId,
-      "students.studentId": { $eq: studentId },
+      _id: bookingId,
+      students: { $elemMatch: { studentId: studentId } },
     };
-    await Booking.find(filterOptions).exec((_, booking) => {
-      if (booking.length == 1) {
+    await Booking.findOne(filterOptions).exec((_, booking) => {
+      if (booking) {
         // remove student
         Booking.updateOne(filterOptions, {
           $pull: { students: { studentId: studentId } },
@@ -172,6 +174,7 @@ const removeStudentFromBooking = async (req, res) => {
 
 const deleteBooking = async (req, res) => {
   try {
+    // const {admin} = req.user;
     const { id } = req.params;
     Booking.find({id}).then((booking) => {
       if (booking) {
