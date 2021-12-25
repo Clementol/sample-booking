@@ -27,7 +27,7 @@ const bookingSchema = new Mongoose.Schema(
         email: {
           type: String,
           required: true,
-          unique: true,
+          // unique: true,
         },
       },
     ],
@@ -47,7 +47,7 @@ const bookingSchema = new Mongoose.Schema(
       {
         studentEmail: {
           type: String,
-          unique: true,
+          // unique: true,
           required: false
         },
         text: {
