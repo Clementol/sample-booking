@@ -58,7 +58,6 @@ const createBooking = async (req, res) => {
                         level: course.level,
                         competencies: { $in: [course.topic] },
                       }).exec(async (_, trainer) => {
-                        
                         // check if trainer is avail on specified date
                         let selectedTrainer =
                           trainer.length > 1 ? trainer[0] : trainer;
@@ -71,9 +70,8 @@ const createBooking = async (req, res) => {
                           startDate: startDate,
                           endDate: endDate,
                         })
-                         
+
                           .then((booking) => {
-                            console.log("here");
                             if (booking) {
                               const msg = { message: `New booking created` };
                               return res.status(200).json(msg);
@@ -101,41 +99,57 @@ const createBooking = async (req, res) => {
   }
 };
 
-const addStudentToBooking = () => {
+const addStudentToBooking = (req, res) => {
   try {
     // const { id, email } = req;
     const bookingId = req.params.id;
     const { studentId, email } = req.body;
 
     //check if user already booked the course
-    Booking.find({
+     Booking.findById({
+      _id: bookingId,
+    }).catch((err) => {
+      if (err) {
+        return res.status(400).json({ error: `YBooking doesn't exist` });
+      }
+      // if (!booking) {
+      //   return res.status(400).json({error: `Booking doesn't exist`})
+      // }
+    });
+
+     Booking.findOne({
       _id: bookingId,
       students: { $elemMatch: { studentId: studentId } },
     }).exec((_, booking) => {
-      if (booking.length == 1) {
-        res.status(400).json({ error: "Already registered for this course!" });
-        return;
+      if (booking) {
+        return res
+          .status(400)
+          .json({ error: "Already registered for this course!" });
       } else {
-        res.status(400).json({ error: "Booking doesn't exist" });
-        return;
+        let bookingFilter = {
+          _id: bookingId,
+        };
+    
+        Booking.updateOne(bookingFilter, {
+          $push: { students: { studentId: studentId, email: email } },
+        })
+          .then((booking) => {
+            if (booking) {
+              const msg = { message: `student added to booking` };
+              return res.status(201).json(msg);
+            }
+          })
+          .catch((err) => {
+            if (err) {
+              const errMsg = {
+                error: `Can't find booking to add student ${err}`,
+              };
+              return res.status(400).json(errMsg);
+            }
+          });
       }
-    });
-
-    let bookingFilter = {
-      _id: bookingId,
-    };
-
-    Booking.updateOne(bookingFilter, {
-      $push: { students: { studentId: studentId, email: email } },
     })
-      .then(() => {
-        const msg = { message: `student added to booking` };
-        return res.status(201).json(msg);
-      })
-      .catch((err) => {
-        const errMsg = { error: `Can't find booking to add student ${err}` };
-        return res.status(400).json(errMsg);
-      });
+    
   } catch (error) {
     const errMsg = { error: `Unable to add student to booking  ${error}` };
     return res.status(400).json(errMsg);
@@ -145,7 +159,7 @@ const addStudentToBooking = () => {
 const removeStudentFromBooking = async (req, res) => {
   let msg;
   try {
-   // const {admin} = req.user;
+    // const {admin} = req.user;
     const bookingId = req.params.id;
     const { studentId } = req.body;
     //check if user already booked the course
@@ -176,12 +190,12 @@ const deleteBooking = async (req, res) => {
   try {
     // const {admin} = req.user;
     const { id } = req.params;
-    Booking.find({id}).then((booking) => {
+    Booking.find({ id }).then((booking) => {
       if (booking) {
         res.status(400).json({ error: "booking does not exist" });
-      return;
+        return;
       }
-    })
+    });
     await Booking.findOneAndRemove({ _id: id }).then(() => {
       res.status(202).json({ message: "booking deleted" });
       return;

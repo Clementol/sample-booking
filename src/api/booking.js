@@ -5,7 +5,7 @@ import { requireSign } from "../middlewares";
 const bookingRouter = Router()
 
 bookingRouter.post('/booking/create', requireSign, createBooking)
-bookingRouter.put('/booking/add-student', /*requireAdmin*/ addStudentToBooking)
+bookingRouter.put('/booking/:id/add-student', /*requireAdmin*/ addStudentToBooking)
 bookingRouter.put('/booking/:id/remove-student', /*requireAdmin*/ removeStudentFromBooking)
 bookingRouter.delete('/booking/delete/:id', /*requireAdmin*/ deleteBooking)
 
