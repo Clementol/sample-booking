@@ -99,28 +99,26 @@ const createBooking = async (req, res) => {
   }
 };
 
-const addStudentToBooking = (req, res) => {
+const addStudentToBooking = async (req, res) => {
   try {
     // const { id, email } = req;
     const bookingId = req.params.id;
     const { studentId, email } = req.body;
 
     //check if user already booked the course
-     Booking.findById({
+    await Booking.findById({
       _id: bookingId,
-    }).catch((err) => {
+    }).exec((err, booking) => {
       if (err) {
         return res.status(400).json({ error: `Booking doesn't exist` });
       }
-      // if (!booking) {
-      //   return res.status(400).json({error: `Booking doesn't exist`})
-      // }
+   
     });
-
-     Booking.findOne({
+    console.log("here")
+    await Booking.findOne({
       _id: bookingId,
       students: { $elemMatch: { studentId: studentId } },
-    }).then(( booking) => {
+    }).then(async( booking) => {
       if (booking) {
         return res
           .status(400)
@@ -130,7 +128,7 @@ const addStudentToBooking = (req, res) => {
           _id: bookingId,
         };
     
-        Booking.updateOne(bookingFilter, {
+        await Booking.updateOne(bookingFilter, {
           $push: { students: { studentId: studentId, email: email } },
         })
           .then((booking) => {
