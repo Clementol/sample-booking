@@ -110,7 +110,7 @@ const addStudentToBooking = (req, res) => {
       _id: bookingId,
     }).catch((err) => {
       if (err) {
-        return res.status(400).json({ error: `YBooking doesn't exist` });
+        return res.status(400).json({ error: `Booking doesn't exist` });
       }
       // if (!booking) {
       //   return res.status(400).json({error: `Booking doesn't exist`})
@@ -120,7 +120,7 @@ const addStudentToBooking = (req, res) => {
      Booking.findOne({
       _id: bookingId,
       students: { $elemMatch: { studentId: studentId } },
-    }).exec((_, booking) => {
+    }).then(( booking) => {
       if (booking) {
         return res
           .status(400)
@@ -190,16 +190,26 @@ const deleteBooking = async (req, res) => {
   try {
     // const {admin} = req.user;
     const { id } = req.params;
-    Booking.find({ id }).then((booking) => {
-      if (booking) {
-        res.status(400).json({ error: "booking does not exist" });
-        return;
-      }
-    });
-    await Booking.findOneAndRemove({ _id: id }).then(() => {
-      res.status(202).json({ message: "booking deleted" });
-      return;
-    });
+    // await Booking.find({ id }).exec((err, booking) => {
+    //   if (err) {
+    //     res.status(400).json({ error: "booking does not exist" });
+    //     return;
+    //   } else if (booking) {
+         await Booking.findOneAndRemove({ _id: id }).then((booking) => {
+          if (booking) {
+            res.status(202).json({ message: "booking deleted" });
+            return;
+          } else {
+            res.status(400).json({ error: `booking does not exist` });
+          return;
+          }
+        }).catch(err => {
+          res.status(400).json({ error: `booking does not exist` });
+          return;
+        })
+      // }
+    // });
+   
   } catch (error) {
     res.status(400).json({ message: `Unable to delete booking ${error}` });
     return;
