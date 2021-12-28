@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { config } from "../../config";
+import { responseMessage } from "../../helpers/response";
 import User from "../../models/user";
 
 // user sign up
@@ -10,7 +11,8 @@ const signUp = async (req, res) => {
   await User.findOne({ email })
     .then(async (user) => {
       if (user) {
-        res.status(400).json({ error: `user already exist!` });
+        const error = `user already exist!`
+        res.status(400).json(responseMessage({}, error, false));
         return;
       }
 
@@ -31,39 +33,41 @@ const signUp = async (req, res) => {
             config.jwtSecret,
             { expiresIn: "30days" },
             (err, token) => {
-              console.log(token);
-              res.status(201).json({
-                token,
-                email: user.email,
-              });
+             let data = {
+               token,
+               email: user.email,
+             }
+              res.status(201).json(responseMessage(data, "success", true));
             }
           );
         }
       });
     })
     .catch((err) => {
+      const error = `Registration was not successfull`
       res
         .status(400)
-        .json({ error: `Registration was not successfull ${err}` });
+        .json(responseMessage({}, error, false));
       return;
     });
 };
 
 // User sign in
 const signIn = async (req, res) => {
-  res.setHeader("Content-Type", "application/json");
   const { email, password } = req.body;
 
   try {
     User.findOne({ email }).then((user) => {
       if (!user) {
-        res.status(401).json({ error: "user does not exits!" });
+        const error = "Invalid credentials"
+        res.status(400).json(responseMessage({}, error, false));
         return;
       }
       //console.log(user)
       bcrypt.compare(password, user.password).then((isMatch) => {
         if (!isMatch) {
-          res.status(400).json({ error: `Invalid password` });
+          const error = `Invalid credentials`
+          res.status(400).json(responseMessage({}, error, false));
           return;
         }
         if (user) {
@@ -73,17 +77,19 @@ const signIn = async (req, res) => {
             config.jwtSecret,
             { expiresIn: "30days" },
             (err, token) => {
-              res.status(201).json({
+              let data = {
                 token,
                 email,
-              });
+              }
+              res.status(201).json(responseMessage(data, "success", true));
             }
           );
         }
       });
     });
   } catch (err) {
-    res.status(400).send(JSON.stringify(`Unable to login ${err}`));
+    const error = `Unable to login`
+    res.status(400).json(responseMessage({}, error, false));
     return;
   }
 };

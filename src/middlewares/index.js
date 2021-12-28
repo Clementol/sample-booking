@@ -1,12 +1,15 @@
 import jwt from "jsonwebtoken";
 import { config } from "../config";
+import { responseMessage } from "../helpers/response";
 
 const requireSign = (req, res, next) => {
+  let error
   try {
     const token = req.headers["authorization"].split(" ")[1];
 
     if (!token) {
-      res.status(401).json({ error: "Authorization is required" });
+      error = "login is required" 
+      res.status(401).json(responseMessage({}, error, false));
       return;
     }
 
@@ -18,7 +21,8 @@ const requireSign = (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(401).json({ error: `Token is not valid ${error}` });
+    error = `logging in error`
+    res.status(401).json(responseMessage({}, error, false));
     return
   }
 };

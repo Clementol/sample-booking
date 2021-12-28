@@ -22,7 +22,8 @@ const createBooking = async (req, res) => {
       students: { $elemMatch: { studentId: studentId } },
     }).exec(async (_, booking) => {
       if (booking.length == 1) {
-        res.status(400).json({ error: "Already registered for this course!" });
+        const error = "Already registered for this course!"
+        res.status(400).json(responseMessage({}, error, false));
         return;
       } else {
         // create booking base on location and course
@@ -38,8 +39,8 @@ const createBooking = async (req, res) => {
             Booking.updateOne(bookingFilter, {
               $push: { students: { studentId: studentId, email: email } },
             }).then(() => {
-              const msg = { message: `booking successful` };
-              return res.status(201).json(msg);
+              const message = `booking successful` 
+              return res.status(201).json(responseMessage({}, message, true ));
             });
           } else {
             //base on different location
@@ -74,15 +75,14 @@ const createBooking = async (req, res) => {
 
                           .then((booking) => {
                             if (booking) {
-                              const msg = { message: `New booking created` };
-                              return res.status(200).json(msg);
+                              const msg = `New booking created`;
+                              return res.status(200).json(responseMessage(booking, msg, true ));
                             }
                           })
                           .catch((err) => {
-                            const msg = {
-                              error: `Can't create new booking ${err}`,
-                            };
-                            return res.status(400).json(msg);
+                            const error = `Can't create new booking ${err}`
+                          
+                            return res.status(400).json(responseMessage({}, error, false));
                           });
                       });
                     }
@@ -94,13 +94,13 @@ const createBooking = async (req, res) => {
         });
       }
     });
-  } catch (error) {
-    const errMsg = { error: `Unable to create booking ${error}` };
-    return res.status(400).json(errMsg);
+  } catch (err) {
+    const error = `Unable to create booking ${err}` ;
+    return res.status(400).json(responseMessage({}, error, false));
   }
 };
 
-const studentBookings = async (req, res) => {
+const studentBookings = async (req, res) => { 
   try {
     
     let studentId = req.user.id
@@ -126,7 +126,8 @@ const addStudentToBooking = async (req, res) => {
       _id: bookingId,
     }).exec((err, booking) => {
       if (err) {
-        return res.status(400).json({ error: `Booking doesn't exist` });
+        const error = `Booking doesn't exist`
+        return res.status(400).json(responseMessage({}, error, false));
       }
    
     });
@@ -136,9 +137,10 @@ const addStudentToBooking = async (req, res) => {
       students: { $elemMatch: { studentId: studentId } },
     }).then(async( booking) => {
       if (booking) {
+        const error = "Already registered for this course!" 
         return res
           .status(400)
-          .json({ error: "Already registered for this course!" });
+          .json(responseMessage({}, error, false));
       } else {
         let bookingFilter = {
           _id: bookingId,
@@ -149,24 +151,22 @@ const addStudentToBooking = async (req, res) => {
         })
           .then((booking) => {
             if (booking) {
-              const msg = { message: `student added to booking` };
-              return res.status(201).json(msg);
+              const msg = `student added to booking`
+              return res.status(201).json(responseMessage(booking, msg, true));
             }
           })
           .catch((err) => {
             if (err) {
-              const errMsg = {
-                error: `Can't find booking to add student ${err}`,
-              };
-              return res.status(400).json(errMsg);
+              const error = `Can't find booking to add student ${err}`
+              return res.status(400).json(responseMessage({}, error, false));
             }
           });
       }
     })
     
-  } catch (error) {
-    const errMsg = { error: `Unable to add student to booking  ${error}` };
-    return res.status(400).json(errMsg);
+  } catch (err) {
+    const error = `Unable to add student to booking ${err}`;
+    return res.status(400).json(responseMessage({}, error, false));
   }
 };
 
@@ -187,16 +187,17 @@ const removeStudentFromBooking = async (req, res) => {
         Booking.updateOne(filterOptions, {
           $pull: { students: { studentId: studentId } },
         }).then(() => {
-          msg = { message: `Remove student from booking` };
-          return res.status(202).json(msg);
+          msg = `Remove student from booking`;
+          return res.status(202).json(responseMessage({}, msg, true));
         });
       } else {
-        return res.status(400).json({ error: `student not booked` });
+        const error = `student not booked`
+        return res.status(400).json(responseMessage({}, error, false));
       }
     });
-  } catch (error) {
-    msg = { error: `Unable to remove student from booking ${error}` };
-    return res.status(400).json(msg);
+  } catch (err) {
+    const error = `Unable to remove student from booking ${err}`
+    return res.status(400).json(responseMessage({}, error, false));
   }
 };
 
@@ -211,21 +212,25 @@ const deleteBooking = async (req, res) => {
     //   } else if (booking) {
          await Booking.findOneAndRemove({ _id: id }).then((booking) => {
           if (booking) {
-            res.status(202).json({ message: "booking deleted" });
+            const message = "booking deleted"
+            res.status(202).json(responseMessage({}, message, true));
             return;
           } else {
-            res.status(400).json({ error: `booking does not exist` });
+            const error = `booking does not exist`
+            res.status(400).json(responseMessage({}, error, false));
           return;
           }
         }).catch(err => {
-          res.status(400).json({ error: `booking does not exist` });
+          const error = `booking does not exist`
+          res.status(400).json(responseMessage({}, error, false));
           return;
         })
       // }
     // });
    
   } catch (error) {
-    res.status(400).json({ message: `Unable to delete booking ${error}` });
+    const msg = `Unable to delete booking ${error}`
+    res.status(400).json(responseMessage({}, msg, false));
     return;
   }
 };
