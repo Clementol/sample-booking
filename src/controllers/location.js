@@ -1,3 +1,4 @@
+import { responseMessage } from "../helpers/response";
 import Location from "../models/location";
 
 const cityLocations = async (req, res) => {
@@ -5,16 +6,18 @@ const cityLocations = async (req, res) => {
     const { city } = req.params;
     Location.find({ "city": { $eq: city } }).exec((_, locations) => {
       if (locations.length >= 1) {
-        res.status(200).json({ locations });
+        res.status(200).json(responseMessage(locations, "success", true));
         return;
       } else {
-        res.status(400).json({message: `No location found` });
+        const message = `No location found`
+        res.status(400).json(responseMessage({}, message, false));
         return;
       }
     
     });
   } catch (err) {
-    return res.status(400).json({ error: `Unable to get locations ${err}` });
+    const  error = `Unable to get locations ${err}`
+    return res.status(400).json(responseMessage({}, error, false));
 
   }
 };

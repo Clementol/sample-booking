@@ -38,9 +38,9 @@ const createBooking = async (req, res) => {
             //update booking by adding student
             Booking.updateOne(bookingFilter, {
               $push: { students: { studentId: studentId, email: email } },
-            }).then(() => {
+            }).then((booking) => {
               const message = `booking successful` 
-              return res.status(201).json(responseMessage({}, message, true ));
+              return res.status(201).json(responseMessage(booking, message, true ));
             });
           } else {
             //base on different location
@@ -106,7 +106,11 @@ const studentBookings = async (req, res) => {
     let studentId = req.user.id
     await Booking.find({
       students: { $elemMatch: { studentId: studentId } },
-    }).then(async( bookings) => {
+    })
+    .populate("courseId")
+    .populate("locationId")
+    .populate("trainerId")
+    .then(async( bookings) => {
       return res.status(200).json(responseMessage(bookings, "success", true))
      })
   } catch (err) {
