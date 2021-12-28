@@ -1,3 +1,4 @@
+import { responseMessage } from "../helpers/response";
 import Booking from "../models/booking";
 import Course from "../models/course";
 import Location from "../models/location";
@@ -99,6 +100,21 @@ const createBooking = async (req, res) => {
   }
 };
 
+const studentBookings = async (req, res) => {
+  try {
+    
+    let studentId = req.user.id
+    await Booking.find({
+      students: { $elemMatch: { studentId: studentId } },
+    }).then(async( bookings) => {
+      return res.status(200).json(responseMessage(bookings, "success", true))
+     })
+  } catch (err) {
+    const error = `Unable to get student bookings ${err}`
+    return res.status(400).json(responseMessage({}, error, false))
+  }
+}
+
 const addStudentToBooking = async (req, res) => {
   try {
     // const { id, email } = req;
@@ -114,7 +130,7 @@ const addStudentToBooking = async (req, res) => {
       }
    
     });
-    console.log("here")
+    
     await Booking.findOne({
       _id: bookingId,
       students: { $elemMatch: { studentId: studentId } },
@@ -217,6 +233,7 @@ const deleteBooking = async (req, res) => {
 export {
   createBooking,
   addStudentToBooking,
+  studentBookings,
   removeStudentFromBooking,
   deleteBooking,
 };
