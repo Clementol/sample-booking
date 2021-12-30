@@ -81,7 +81,7 @@ const signIn = async (req, res) => {
                 token,
                 email,
               }
-              res.status(201).json(responseMessage(data, "success", true));
+              res.status(200).json(responseMessage(data, "success", true));
             }
           );
         }
