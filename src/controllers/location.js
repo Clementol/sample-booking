@@ -6,7 +6,7 @@ const cityLocations = async (req, res) => {
     const { city } = req.params;
     Location.find({ "city": { $eq: city } }).exec((_, locations) => {
       if (locations.length >= 1) {
-        res.status(200).json(responseMessage(locations, "success", true));
+        res.status(200).json(responseMessage(locations, "get locations successfully", true));
         return;
       } else {
         const message = `No location found`
