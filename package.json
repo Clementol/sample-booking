@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node --experimental-specifier-resolution=node src/index",
-    "dev": "nodemon --experimental-specifier-resolution=node src/index"
+    "start": "node --experimental-specifier-resolution=node index",
+    "dev": "nodemon --experimental-specifier-resolution=node index"
   },
   "repository": {
     "type": "git",

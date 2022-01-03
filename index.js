@@ -5,13 +5,16 @@ import morgan from "morgan";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import mongoose from "mongoose";
+import fs from "fs";
 
 import "dotenv/config";
 
 const app = express();
 
-import { config } from "./config";
-import { routes } from "./routes";
+import { config } from "./src/config";
+import { routes } from "./src/routes";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 const PORT = process.env.PORT || 5000;
 
@@ -20,12 +23,12 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(morgan("combined"));
 app.use(cors());
-
+const __dirname = dirname(fileURLToPath(import.meta.url));
 // Routes
 
 routes(app);
 const options = {
-  swaggerDefinition: {
+  definition: {
     openapi: "3.0.0",
     info: {
       title: "Booking API",
@@ -36,11 +39,12 @@ const options = {
       url: `http://localhost:${PORT}`
     }]
   },
-  apis: ['./routes/trainer.js'],
+  apis: [`${__dirname}/src/routes*.js`]
 };
 
-const specs = swaggerJsDoc(options);
-app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(specs));
+const specs = await swaggerJsDoc(options);
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 mongoose
   .connect(config.MONGO_URI, {
